@@ -39,19 +39,30 @@ app.post("/api/shorturl", function (req, res) {
   try {
     const inputUrl = new URL(req.body.url);
     const hostname = inputUrl.hostname;
+    console.log(hostname);
 
-    /* Calls the function, getting the shortened code
-     */
-    const shortened = makeShortened();
-    // Returns URL and shortened code as json
-    res.json({
-      original_url: req.body.url,
-      short_url: shortened,
+    dns.lookup(hostname, (error, address, family) => {
+      if (error) {
+        console.log(error.message);
+        res.json({
+          error: "Hostname invalid",
+        });
+        return;
+      } else {
+        /* Calls the function, getting the shortened code
+         */
+        const shortened = makeShortened();
+        // Returns URL and shortened code as json
+        res.json({
+          original_url: req.body.url,
+          short_url: shortened,
+        });
+        // Pushes url and code into the same array, one after another
+        codeUrl.push(req.body.url);
+        codeUrl.push(shortened);
+        console.log(codeUrl);
+      }
     });
-    // Pushes url and code into the same array, one after another
-    codeUrl.push(req.body.url);
-    codeUrl.push(shortened);
-    console.log(codeUrl);
   } catch (error) {
     res.json({
       error: "invalid url",
