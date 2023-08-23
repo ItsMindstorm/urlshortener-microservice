@@ -36,32 +36,27 @@ const makeShortened = () => {
 
 app.post("/api/shorturl", function (req, res) {
   // This gets the host name from the input url
-  const inputUrl = new URL(req.body.url);
-  const hostname = inputUrl.hostname;
+  try {
+    const inputUrl = new URL(req.body.url);
+    const hostname = inputUrl.hostname;
 
-  // Undertakes a dns lookup from hostname to check validity
-  dns.lookup(hostname, function (error) {
-    // Throws error if the url is invalid
-    if (error) {
-      res.json({
-        error: "invalid input",
-      });
-    } else {
-      /* Runs when URL is valid
-	   Then calls the function, getting the shortened code
-	*/
-      const shortened = makeShortened();
-      // Returns URL and shortened code as json
-      res.json({
-        original_url: req.body.url,
-        short_url: shortened,
-      });
-      // Pushes url and code into the same array, one after another
-      codeUrl.push(req.body.url);
-      codeUrl.push(shortened);
-      console.log(codeUrl);
-    }
-  });
+    /* Calls the function, getting the shortened code
+     */
+    const shortened = makeShortened();
+    // Returns URL and shortened code as json
+    res.json({
+      original_url: req.body.url,
+      short_url: shortened,
+    });
+    // Pushes url and code into the same array, one after another
+    codeUrl.push(req.body.url);
+    codeUrl.push(shortened);
+    console.log(codeUrl);
+  } catch (error) {
+    res.json({
+      error: "invalid url",
+    });
+  }
 });
 
 app.get("/api/shorturl/:url", function (req, res) {
