@@ -22,8 +22,7 @@ app.use(
   }),
 );
 
-let origUrls = [];
-let shortUris = [];
+let codeUrl = [];
 
 const makeShortened = () => {
   // Makes a shortened, 5 random characters code
@@ -57,23 +56,41 @@ app.post("/api/shorturl", function (req, res) {
         original_url: req.body.url,
         short_url: shortened,
       });
-      // Pushes url and shortened code into 2 empty arrays
-      origUrls.push(req.body.url);
-      shortUris.push(shortened);
+      // Pushes url and code into the same array, one after another
+      codeUrl.push(req.body.url);
+      codeUrl.push(shortened);
+      console.log(codeUrl);
     }
   });
 });
 
 app.get("/api/shorturl/:url", function (req, res) {
-  /* Checks if input code is identical in both type
-     and content by converting it into a string */
-  if (req.params.url === shortUris[0].toString()) {
+  /* Function finds whether the provided code matches the same code in the array */
+  const matchingShort = () => {
+    const matching = codeUrl.find((code) => {
+      return code.toString() === req.params.url;
+    });
+    console.log(codeUrl.indexOf(matching));
+    return matching;
+  };
+
+  const matching = matchingShort();
+
+  /* Function grabs the url in the array that is 1 position before the index of the provided code */
+  const matchingUrl = () => {
+    const url = codeUrl[codeUrl.indexOf(matching) - 1];
+    console.log(url);
+
+    return url;
+  };
+
+  const url = matchingUrl();
+
+  /* Checks whether there is a match provided by the function, if there is, it will redirect the user to the matched url from the function */
+  if (matching) {
     console.log("if statement working!");
     // Redirects to original url
-    res.redirect(origUrls[0]);
-    // Empties the 2 arrays
-    origUrls = [];
-    shortUris = [];
+    res.redirect(url);
   } else {
     // Throws an error if the code is invalid
     res.json({
