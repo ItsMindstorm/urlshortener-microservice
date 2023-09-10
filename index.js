@@ -55,7 +55,7 @@ app.post("/api/shorturl", async (req, res) => {
 		// Pushes url and code to db
 		await urls.insertOne({ original_url: req.body.url, short_url: shortened })
 	} catch (error) {
-		console.log(err)
+		console.log(error)
 		console.log("caught error")
 		return res.json({
 			error: "invalid url",
