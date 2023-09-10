@@ -1,5 +1,5 @@
 # URL Shortener Microservice
-This microservice turns a valid input url of the format: `https://www.youraddress.com` into a shortened number code in the form of JSON: 
+This microservice turns a valid input url of the format: `https://www.youraddress.com` or `http://www.youraddress.com`  into a shortened number code in the form of JSON: 
 ```json 
 {
     "original_url": "Your input url",
