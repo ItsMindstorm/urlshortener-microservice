@@ -37,7 +37,7 @@ const makeShortened = () => {
 	return finalShort;
 };
 
-app.post("/api/shorturl", function(req, res) {
+app.post("/api/shorturl", async (req, res) => {
 	// This gets the host name from the input url
 	try {
 		const inputUrl = new URL(req.body.url);
@@ -53,7 +53,7 @@ app.post("/api/shorturl", function(req, res) {
 			short_url: shortened,
 		});
 		// Pushes url and code to db
-		urls.insertOne({ original_url: req.body.url, short_url: shortened })
+		await urls.insertOne({ original_url: req.body.url, short_url: shortened })
 	} catch (error) {
 		res.json({
 			error: "invalid url",
