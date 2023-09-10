@@ -9,3 +9,6 @@ This microservice turns a valid input url of the format: `https://www.youraddres
 This code can then used with a `GET` request at `/api/shorturl/:url` and the service will redirect you to your desired origin url. 
 
 The codes and associated urls are stored in a mongoDB database in the cloud.
+
+## Caveat 
+This service is hosted on [render](render.com) with the free instance plan. As a result, the service will spin down after inactivity.

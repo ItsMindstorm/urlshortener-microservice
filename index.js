@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const parser = require("body-parser");
-const store = require("node-localstorage")
+const dns = require("dns")
 const { MongoClient } = require("mongodb")
 
 // Basic Configuration
@@ -37,13 +37,12 @@ const makeShortened = () => {
 	return finalShort;
 };
 
-app.post("/api/shorturl", async (req, res) => {
+app.post("/api/shorturl", (req, res) => {
 	// This gets the host name from the input url
-	try {
-		const inputUrl = new URL(req.body.url);
-		const hostname = inputUrl.hostname;
-		console.log(hostname);
+	const inputUrl = new URL(req.body.url);
+	const protocol = inputUrl.protocol
 
+	if (protocol === "http:" || protocol === "https:") {
 		/* Calls the function, getting the shortened code
 		 */
 		const shortened = makeShortened();
@@ -53,13 +52,11 @@ app.post("/api/shorturl", async (req, res) => {
 			short_url: shortened,
 		});
 		// Pushes url and code to db
-		await urls.insertOne({ original_url: req.body.url, short_url: shortened })
-	} catch (error) {
-		console.log(error)
-		console.log("caught error")
-		return res.json({
-			error: "invalid url",
-		});
+		urls.insertOne({ original_url: req.body.url, short_url: shortened })
+	} else {
+		res.json({
+			error: "invalid url"
+		})
 	}
 });
 
